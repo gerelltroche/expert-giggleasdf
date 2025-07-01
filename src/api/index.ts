@@ -17,11 +17,31 @@ export const typeDefs = gql`
     familyName: String!
     displayName: String!
     country: Country
+    pronouns: String
   }
 
   type Country {
     cca2: String!
     name: String!
+  }
+
+  input AuthorInput {
+    givenName: String!
+    familyName: String!
+    pronouns: String!
+    countryCode: String
+  }
+
+  input AuthorUpdateInput {
+    givenName: String
+    familyName: String
+    pronouns: String
+    countryCode: String
+  }
+
+  type Mutation {
+    addAuthor(input: AuthorInput!): Author!
+    editAuthor(id: ID!, input: AuthorUpdateInput!): Author!
   }
 
   type Query {
@@ -50,14 +70,28 @@ export const resolvers = {
   },
 
   Query: {
-    authors: (parent: unknown, args: unknown, context: Context) => {
+    authors: (_parent: unknown, _args: unknown, _context: Context) => {
       return db.listAuthors();
     },
-    author: (parent: unknown, args: { id: string }, context: Context) => {
+    author: (_parent: unknown, args: { id: string }, _context: Context) => {
       return db.getAuthorById(parseInt(args.id, 10));
     },
     countries: () => {
       return countries.getAll();
+    },
+  },
+
+  Mutation: {
+    addAuthor: (_parent: unknown, args: { input: { givenName: string; familyName: string; pronouns: string; countryCode?: string } }, _context: Context) => {
+      return db.addAuthor({
+        givenName: args.input.givenName,
+        familyName: args.input.familyName,
+        pronouns: args.input.pronouns,
+        countryCode: args.input.countryCode || null
+      });
+    },
+    editAuthor: (_parent: unknown, args: { id: string; input: { givenName?: string; familyName?: string; pronouns?: string; countryCode?: string } }, _context: Context) => {
+      return db.updateAuthor(parseInt(args.id), args.input);
     },
   },
 };
