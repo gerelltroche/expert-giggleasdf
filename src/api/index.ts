@@ -26,6 +26,7 @@ export const typeDefs = gql`
 
   type Query {
     authors: [Author!]!
+    author(id: ID!): Author
     countries: [Country!]!
   }
 `;
@@ -51,6 +52,9 @@ export const resolvers = {
   Query: {
     authors: (parent: unknown, args: unknown, context: Context) => {
       return db.listAuthors();
+    },
+    author: (parent: unknown, args: { id: string }, context: Context) => {
+      return db.getAuthorById(parseInt(args.id, 10));
     },
     countries: () => {
       return countries.getAll();

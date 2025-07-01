@@ -20,6 +20,10 @@ export class Db {
   public listAuthors() {
     return this.knex.table<Author>("authors").select("*").limit(10);
   }
+
+  public getAuthorById(id: number) {
+    return this.knex.table<Author>("authors").select("*").where("id", id).first();
+  }
 }
 
 export default new Db();
