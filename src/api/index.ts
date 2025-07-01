@@ -30,9 +30,16 @@ export const typeDefs = gql`
   }
 `;
 
+const countriesWithFamilyNameFirst = ["JP"];
+
 export const resolvers = {
   Author: {
-    displayName: (author: Author) => `${author.givenName} ${author.familyName}`,
+    displayName: (author: Author & { countryCode?: string }) => {
+      if (countriesWithFamilyNameFirst.includes(author.countryCode)) {
+        return `${author.familyName} ${author.givenName}`;
+      }
+      return `${author.givenName} ${author.familyName}`;
+    },
     country: (author: Author) => {
       if (!author.countryCode) {
         return null;
