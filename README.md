@@ -1,6 +1,3 @@
-# [Double](https://withdouble.com) · Full-stack engineering challenge
-
-:wave: If you're looking for an adventure, [look no further](https://withdouble.com/jobs).
 
 ## Instructions
 
