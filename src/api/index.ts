@@ -45,7 +45,7 @@ export const typeDefs = gql`
   }
 
   type Query {
-    authors: [Author!]!
+    authors(limit: Int, offset: Int): [Author!]!
     author(id: ID!): Author
     countries: [Country!]!
   }
@@ -70,8 +70,8 @@ export const resolvers = {
   },
 
   Query: {
-    authors: (_parent: unknown, _args: unknown, _context: Context) => {
-      return db.listAuthors();
+    authors: (_parent: unknown, args: { limit?: number; offset?: number }, _context: Context) => {
+      return db.listAuthors({ limit: args.limit, offset: args.offset });
     },
     author: (_parent: unknown, args: { id: string }, _context: Context) => {
       return db.getAuthorById(parseInt(args.id, 10));
