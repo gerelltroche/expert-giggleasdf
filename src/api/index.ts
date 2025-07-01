@@ -5,8 +5,10 @@
 import { gql } from "graphql-tag";
 import { Context } from "../types";
 import { Db, Author } from "../db";
+import Countries from "../lib/Countries";
 
 const db = new Db();
+const countries = new Countries();
 
 export const typeDefs = gql`
   type Author {
@@ -14,20 +16,37 @@ export const typeDefs = gql`
     givenName: String!
     familyName: String!
     displayName: String!
+    country: Country
+  }
+
+  type Country {
+    cca2: String!
+    name: String!
   }
 
   type Query {
     authors: [Author!]!
+    countries: [Country!]!
   }
 `;
 
 export const resolvers = {
   Author: {
     displayName: (author: Author) => `${author.givenName} ${author.familyName}`,
+    country: (author: Author) => {
+      if (!author.countryCode) {
+        return null;
+      }
+      return countries.findByCode(author.countryCode);
+    },
   },
+
   Query: {
-    authors: (parent, args, context: Context) => {
+    authors: (parent: unknown, args: unknown, context: Context) => {
       return db.listAuthors();
+    },
+    countries: () => {
+      return countries.getAll();
     },
   },
 };
