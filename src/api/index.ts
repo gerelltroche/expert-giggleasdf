@@ -4,6 +4,9 @@
 
 import { gql } from "graphql-tag";
 import { Context } from "../types";
+import { Db } from "../db";
+
+const db = new Db();
 
 export const typeDefs = gql`
   type Author {
@@ -20,9 +23,7 @@ export const typeDefs = gql`
 export const resolvers = {
   Query: {
     authors: (parent, args, context: Context) => {
-      // 🐞 Bug fix needed!
-      // We're not returning what's in DB 😱
-      return [];
+      return db.listAuthors();
     },
   },
 };
